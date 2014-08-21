@@ -1,11 +1,15 @@
 <?php
 
+namespace Ekino\World;
+
+use Ekino\Feature;
+
 /**
  * This sublcass of Feature_World overrides UAID and UserID so that
  * feature rampups can maintain consistency on mobile devices.
 */
 
-class Feature_World_Mobile extends Feature_World {
+class Mobile extends World {
     private $_udid;
     private $_userID;
 

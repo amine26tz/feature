@@ -1,5 +1,7 @@
 <?php
 
+namespace Ekino;
+
 /**
  * Perform some checks on the Feature part of a config file. At the
  * moment performs only true syntax checks: it finds things that are
@@ -11,7 +13,7 @@
  * such as having users and groups configured for a config with a
  * string 'enabled' or even 'enabled' => 100.
  */
-class Feature_Lint {
+class Lint {
 
     private $_checked;
     private $_errors;
@@ -22,20 +24,20 @@ class Feature_Lint {
         $this->_errors  = array();
         $this->_path    = array();
         $this->syntax_keys = array(
-            Feature_Config::ENABLED,
-            Feature_Config::USERS,
-            Feature_Config::GROUPS,
-            Feature_Config::ADMIN,
-            Feature_Config::INTERNAL,
-            Feature_Config::PUBLIC_URL_OVERRIDE,
-            Feature_Config::BUCKETING,
+            Config::ENABLED,
+            Config::USERS,
+            Config::GROUPS,
+            Config::ADMIN,
+            Config::INTERNAL,
+            Config::PUBLIC_URL_OVERRIDE,
+            Config::BUCKETING,
             'data',
         );
 
         $this->_legal_bucketing_values = array(
-            Feature_Config::UAID,
-            Feature_Config::USER,
-            Feature_Config::RANDOM,
+            Config::UAID,
+            Config::USER,
+            Config::RANDOM,
         );
     }
 
@@ -108,8 +110,8 @@ class Feature_Lint {
     }
 
     private function checkForOldstyle($stanza) {
-        $enabled = Feature_Util::arrayGet($stanza, Feature_Config::ENABLED, 0);
-        $rampup  = Feature_Util::arrayGet($stanza, 'rampup', null);
+        $enabled = Util::arrayGet($stanza, Config::ENABLED, 0);
+        $rampup  = Util::arrayGet($stanza, 'rampup', null);
         $this->assert($enabled !== 'rampup' || !$rampup, "Old-style config syntax detected.");
     }
 
@@ -117,11 +119,11 @@ class Feature_Lint {
     // (string => ints) such that the ints are all in [0,100] and the
     // total is <= 100.
     private function checkEnabled($stanza) {
-        if (array_key_exists(Feature_Config::ENABLED, $stanza)) {
-            $enabled = $stanza[Feature_Config::ENABLED];
+        if (array_key_exists(Config::ENABLED, $stanza)) {
+            $enabled = $stanza[Config::ENABLED];
             if (is_numeric($enabled)) {
-                $this->assert($enabled >= 0, Feature_Config::ENABLED . " too small: $enabled");
-                $this->assert($enabled <= 100, Feature_Config::ENABLED . "too big: $enabled");
+                $this->assert($enabled >= 0, Config::ENABLED . " too small: $enabled");
+                $this->assert($enabled <= 100, Config::ENABLED . "too big: $enabled");
             } else if (is_array($enabled)) {
                 $tot = 0;
                 foreach ($enabled as $k => $v) {
@@ -140,8 +142,8 @@ class Feature_Lint {
     }
 
     private function checkUsers($stanza) {
-        if (array_key_exists(Feature_Config::USERS, $stanza)) {
-            $users = $stanza[Feature_Config::USERS];
+        if (array_key_exists(Config::USERS, $stanza)) {
+            $users = $stanza[Config::USERS];
             if (is_array($users) && !self::isList($users)) {
                 foreach ($users as $variant => $value) {
                     $this->assert(is_string($variant), "User variant names must be strings.");
@@ -154,17 +156,17 @@ class Feature_Lint {
     }
 
     private function checkUserValue($users) {
-        $this->assert(is_string($users) || self::isList($users), Feature_Config::USERS . " must be string or list of strings: '$users'");
+        $this->assert(is_string($users) || self::isList($users), Config::USERS . " must be string or list of strings: '$users'");
         if (self::isList($users)) {
             foreach ($users as $user) {
-                $this->assert(is_string($user), Feature_Config::USERS . " elements must be strings: '$user'");
+                $this->assert(is_string($user), Config::USERS . " elements must be strings: '$user'");
             }
         }
     }
 
     private function checkGroups($stanza) {
-        if (array_key_exists(Feature_Config::GROUPS, $stanza)) {
-            $groups = $stanza[Feature_Config::GROUPS];
+        if (array_key_exists(Config::GROUPS, $stanza)) {
+            $groups = $stanza[Config::GROUPS];
             if (is_array($groups) && !self::isList($groups)) {
                 foreach ($groups as $variant => $value) {
                     $this->assert(is_string($variant), "Group variant names must be strings.");
@@ -177,32 +179,32 @@ class Feature_Lint {
     }
 
     private function checkGroupValue($groups) {
-        $this->assert(is_numeric($groups) || self::isList($groups), Feature_Config::GROUPS . " must be number or list of numbers");
+        $this->assert(is_numeric($groups) || self::isList($groups), Config::GROUPS . " must be number or list of numbers");
         if (self::isList($groups)) {
             foreach ($groups as $group) {
-                $this->assert(is_numeric($group), Feature_Config::GROUPS . " elements must be numbers: '$group'");
+                $this->assert(is_numeric($group), Config::GROUPS . " elements must be numbers: '$group'");
             }
         }
     }
 
 
     private function checkAdmin($stanza) {
-        if (array_key_exists(Feature_Config::ADMIN, $stanza)) {
-            $admin = $stanza[Feature_Config::ADMIN];
+        if (array_key_exists(Config::ADMIN, $stanza)) {
+            $admin = $stanza[Config::ADMIN];
             $this->assert(is_string($admin), "Admin must be string naming variant: '$admin'");
         }
     }
 
     private function checkInternal($stanza) {
-        if (array_key_exists(Feature_Config::INTERNAL, $stanza)) {
-            $internal = $stanza[Feature_Config::INTERNAL];
+        if (array_key_exists(Config::INTERNAL, $stanza)) {
+            $internal = $stanza[Config::INTERNAL];
             $this->assert(is_string($internal), "Internal must be string naming variant: '$internal'");
         }
     }
 
     private function checkPublicURLOverride($stanza) {
-        if (array_key_exists(Feature_Config::PUBLIC_URL_OVERRIDE, $stanza)) {
-            $public_url_override = $stanza[Feature_Config::PUBLIC_URL_OVERRIDE];
+        if (array_key_exists(Config::PUBLIC_URL_OVERRIDE, $stanza)) {
+            $public_url_override = $stanza[Config::PUBLIC_URL_OVERRIDE];
             $this->assert(is_bool($public_url_override), "public_url_override must be a boolean: '$public_url_override'");
             if (is_bool($public_url_override)) {
                 $this->assert($public_url_override === true, "Gratuitous public_url_override (defaults to false)");
@@ -211,8 +213,8 @@ class Feature_Lint {
     }
 
     private function checkBucketing($stanza) {
-        if (array_key_exists(Feature_Config::BUCKETING, $stanza)) {
-            $bucketing = $stanza[Feature_Config::BUCKETING];
+        if (array_key_exists(Config::BUCKETING, $stanza)) {
+            $bucketing = $stanza[Config::BUCKETING];
             $this->assert(is_string($bucketing), "Non-string bucketing: '$bucketing'");
             $this->assert(in_array($bucketing, $this->_legal_bucketing_values), "Illegal bucketing: '$bucketing'");
         }

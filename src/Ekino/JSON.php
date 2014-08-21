@@ -1,9 +1,11 @@
 <?php
 
+namespace Ekino;
+
 /*
  * Utility for turning configs into JSON-encodeable data.
  */
-class Feature_JSON {
+class JSON {
 
     /*
      * Return the given config stanza as an array that can be json
@@ -40,9 +42,9 @@ class Feature_JSON {
             $value = array('enabled' => $value);
         }
 
-        $enabled = Feature_Util::arrayGet($value, 'enabled', 0);
-        $users   = self::expandUsersOrGroups(Feature_Util::arrayGet($value, 'users', array()));
-        $groups  = self::expandUsersOrGroups(Feature_Util::arrayGet($value, 'groups', array()));
+        $enabled = Util::arrayGet($value, 'enabled', 0);
+        $users   = self::expandUsersOrGroups(Util::arrayGet($value, 'users', array()));
+        $groups  = self::expandUsersOrGroups(Util::arrayGet($value, 'groups', array()));
 
         if ($enabled === 'off') {
             $spec['variants'][] = self::makeVariantWithUsersAndGroups('on', 0, $users, $groups);
@@ -122,17 +124,17 @@ class Feature_JSON {
         return $result;
     }
 
-    // This is based on parseUsersOrGroups in Feature_Config. Probably
+    // This is based on parseUsersOrGroups in Config. Probably
     // this logic should be put in that class in a form that we can
     // use.
     private static function expandUsersOrGroups ($value) {
         if (is_string($value) || is_numeric($value)) {
-            return array($value => Feature_Config::ON);
+            return array($value => Config::ON);
 
         } elseif (self::isList($value)) {
             $result = array();
             foreach ($value as $who) {
-                $result[$who] = Feature_Config::ON;
+                $result[$who] = Config::ON;
             }
             return $result;
 

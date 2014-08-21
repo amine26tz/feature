@@ -1,5 +1,7 @@
 <?php
 
+namespace Ekino;
+
 /**
  * The interface Feature_Config needs to the outside world. This class
  * is used in the normal case but tests can use a mock
@@ -8,7 +10,7 @@
  * passing stuff back and forth between here and Logger and Logger has
  * no useful independent existence.
  */
-class Feature_World {
+class World {
 
     private $_logger;
     private $_selections = array();

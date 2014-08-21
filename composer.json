@@ -1,0 +1,27 @@
+{
+    "name": "ekino/feature",
+    "type": "Feature",
+    "keywords": ["feature", "a/b testing", "operational rampups"],
+    "homepage": "https://github.com/amine26tz/feature",
+    "type": "library",
+    "licences": "MIT",
+    "authors": [
+        {
+            "name": "Peter Seibe",
+            "email": "peter@etsy.com"
+        },
+        {
+            "name": "Amine Zaghdoudi",
+            "email": "amine.zaghdoudi@ekino.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
+    },
+    "autoload": {
+        "psr-0": { "Feature": "src/" }
+    }
+}

@@ -1,5 +1,7 @@
 <?php
 
+namespace Ekino;
+
 /**
  * The public API testing whether a specific feature is enabled and,
  * if so, what variant should be used.
@@ -39,7 +41,7 @@ class Feature {
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {
-            self::$instance = new Feature_Instance();
+            self::$instance = new Instance();
         }
         return self::$instance;
     }
@@ -204,7 +206,7 @@ class Feature {
      *
      * @param $name name of the feature. Used as a key into the global config array
      *
-     * @return Feature_Config
+     * @return Config
      */
     private static function fromConfig($name) {
         if (array_key_exists($name, self::$configCache)) {
@@ -212,7 +214,7 @@ class Feature {
         } else {
             $world = self::world();
             $stanza = $world->configValue($name);
-            return self::$configCache[$name] = new Feature_Config($name, $stanza, $world);
+            return self::$configCache[$name] = new Config($name, $stanza, $world);
         }
     }
 
@@ -238,12 +240,12 @@ class Feature {
     }
 
     /**
-     * This API always uses the default World. Feature_Config takes
+     * This API always uses the default World. Config takes
      * the world as an argument in order to ease unit testing.
      */
     private static function world () {
         if (!isset(self::$defaultWorld)) {
-            self::$defaultWorld = new Feature_World(new Feature_Logger());
+            self::$defaultWorld = new World(new Logger());
         }
         return self::$defaultWorld;
     }

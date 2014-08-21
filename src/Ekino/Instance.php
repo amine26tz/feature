@@ -1,11 +1,13 @@
 <?php
 
+namespace Ekino;
+
 /**
  * A thin wrapper around the static Feature API for use in
  * templates. The singleton instance of this class should be obtained
  * via Feature::getInstance().
  */
-class Feature_Instance {
+class Instance {
 
     /**
      * Wrapper for Feature::isEnabled($name).
